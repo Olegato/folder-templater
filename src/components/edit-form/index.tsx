@@ -2,14 +2,26 @@ import { InputText } from "primereact/inputtext";
 import { useEditFormStore } from "../../store";
 
 export const EditForm = ({ ...props }) => {
-  const { value, setValue } = useEditFormStore();
+  const { value, setValue, error } = useEditFormStore();
 
   return (
-    <InputText
-      autoFocus
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      {...props}
-    />
+    <div className="flex flex-column gap-2">
+      {/*<label htmlFor="username">Введите название папки</label>*/}
+      <InputText
+        id="name"
+        autoFocus
+        value={value}
+        invalid={Boolean(error)}
+        onChange={(e) => setValue(e.target.value)}
+        aria-describedby="name-help"
+        className={"w-full"}
+        {...props}
+      />
+      {error && (
+        <small className={"text-red-600"} id="name-help">
+          {error}
+        </small>
+      )}
+    </div>
   );
 };

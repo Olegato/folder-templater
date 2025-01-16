@@ -4,6 +4,7 @@ import { useActions } from "../actions-menu/useActions.ts";
 import { useEditFormStore, useFolderTreeStore } from "../../store";
 import { TreeNode } from "primereact/treenode";
 import { EditForm } from "../edit-form";
+import cn from "classnames";
 
 export const FolderTree = () => {
   const { initCreateNode, initChangeName, onChangeName } = useActions();
@@ -15,7 +16,12 @@ export const FolderTree = () => {
     return (
       //todo нормально стилизовать
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <i className="pi pi-folder"></i>
+        <i
+          className={cn("pi", {
+            "pi-folder": node.data === "folder",
+            "pi-file": node.data === "file",
+          })}
+        ></i>
         {(editableNodeKey !== node.key || editableAction !== "edit") && (
           <span>{node.label}</span>
         )}
@@ -29,7 +35,7 @@ export const FolderTree = () => {
             <Button
               icon="pi pi-check"
               className="p-button-success"
-              onClick={() => onChangeName(value)}
+              onClick={() => onChangeName(value, node.data)}
             />
           </div>
         )}
@@ -39,13 +45,13 @@ export const FolderTree = () => {
               label="Add folder"
               icon="pi pi-plus"
               className="p-button-text p-button-sm"
-              onClick={() => initCreateNode(node.key)}
+              onClick={() => initCreateNode(node.key, "folder")}
             />
             <Button
               label="Add file"
               icon="pi pi-plus"
               className="p-button-text p-button-sm"
-              onClick={() => initCreateNode(node.key)}
+              onClick={() => initCreateNode(node.key, "file")}
             />
           </>
         )}

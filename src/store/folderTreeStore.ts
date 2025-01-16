@@ -25,7 +25,7 @@ interface FolderTreeActions {
 const mock: FolderTree = {
   key: uuidv4(),
   label: "Root Folder",
-  children: [{ key: uuidv4(), label: "Child Folder 1" }],
+  children: [{ key: uuidv4(), label: "Child Folder 1", data: "folder" }],
   data: "folder",
 };
 

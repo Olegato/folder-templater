@@ -1,21 +1,26 @@
 import { useEditFormStore, useFolderTreeStore } from "../../store";
 import { v4 as uuidv4 } from "uuid";
-import { FolderTree } from "../../types/folder-tree.ts";
+import { DataType, FolderTree } from "../../types/folder-tree.ts";
 import { useConfirmModalStore } from "../../store/confirmModalStore.ts";
+import { useValidation } from "../edit-form/useValidation.ts";
+import { useEffect } from "react";
 
-const createNodeTemplate = (label: FolderTree["label"]) => {
+const createNodeTemplate = (label: FolderTree["label"], data: DataType) => {
   return {
     key: uuidv4(),
     label,
+    data,
   };
 };
 
 export const useActions = () => {
   const { tree, changeTree, setEditableState, editableState } =
     useFolderTreeStore();
+
   const { editableNodeKey, editableAction, editableNodeType } = editableState;
-  const { setValue } = useEditFormStore();
+  const { setValue, setError, error } = useEditFormStore();
   const { handleVisibleModal } = useConfirmModalStore();
+  const { validate } = useValidation();
 
   const initChangeName = (
     key: FolderTree["key"],
@@ -25,9 +30,15 @@ export const useActions = () => {
     setEditableState(key, "edit");
   };
 
-  const onChangeName = (newName: FolderTree["label"]) => {
-    changeTree(onChangeNode(tree, editableNodeKey, { label: newName }));
-    onResetChangeName();
+  const onChangeName = (newName: FolderTree["label"], type: DataType) => {
+    const validateError = validate(newName, type);
+
+    if (!validateError) {
+      changeTree(onChangeNode(tree, editableNodeKey, { label: newName }));
+      onResetChangeName();
+    } else {
+      setError(validateError);
+    }
   };
 
   const onResetChangeName = () => {
@@ -36,19 +47,16 @@ export const useActions = () => {
     setEditableState("");
   };
 
-  const initCreateNode = (key: FolderTree["key"]) => {
-    setEditableState(key);
+  const initCreateNode = (key: FolderTree["key"], type: DataType) => {
+    setEditableState(key, "create", type);
     handleVisibleModal();
   };
 
-  const addFileNode = () => {};
-
   const addChileNode = (label: FolderTree["label"]) => {
-    //инпут автофокус
     changeTree(
       // onChangeNode(tree, key, { children: [createNodeTemplate("child")] }),
       onChangeNode(tree, editableNodeKey, {
-        children: [createNodeTemplate(label)],
+        children: [createNodeTemplate(label, editableNodeType)],
         // expanded: true,
       }),
     );

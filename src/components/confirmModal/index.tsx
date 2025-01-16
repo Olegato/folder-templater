@@ -1,21 +1,34 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { useConfirmModalStore, useEditFormStore } from "../../store";
+import {
+  useConfirmModalStore,
+  useEditFormStore,
+  useFolderTreeStore,
+} from "../../store";
 import { EditForm } from "../edit-form";
 import { useActions } from "../actions-menu/useActions.ts";
+import { DataType } from "../../types/folder-tree.ts";
+import { useValidation } from "../edit-form/useValidation.ts";
 
 export const ConfirmModal = () => {
   const { isOpen, handleVisibleModal } = useConfirmModalStore();
-  const { value, setValue } = useEditFormStore();
+  const { value, setError, resetForm } = useEditFormStore();
+  const { editableState } = useFolderTreeStore();
   const { addChileNode } = useActions();
+  const { validate } = useValidation();
 
   const onConfirm = () => {
-    addChileNode(value);
-    onClose();
+    const error = validate(value, editableState.editableNodeType as DataType);
+    if (error) {
+      setError(error);
+    } else {
+      addChileNode(value);
+      onClose();
+    }
   };
 
   const onClose = () => {
-    setValue("");
+    resetForm();
     handleVisibleModal();
   };
 
