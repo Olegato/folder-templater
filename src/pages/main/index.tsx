@@ -1,5 +1,5 @@
 import { FolderTree } from "../../components/folder-tree";
-import { ConfirmModal } from "../../components/confirmModal";
+import { ConfirmModal } from "../../components/confirm-modal";
 
 export const MainPage = () => {
   return (
