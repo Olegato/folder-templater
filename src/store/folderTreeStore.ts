@@ -9,8 +9,8 @@ interface FolderTreeState {
 
 interface EditableState {
   editableNodeKey: FolderTree["key"];
-  editableAction: "create" | "edit" | "delete" | null;
-  editableNodeType: DataType | null;
+  editableAction: "create" | "edit" | "delete" | "";
+  editableNodeType: DataType | "";
 }
 
 interface FolderTreeActions {
@@ -20,6 +20,7 @@ interface FolderTreeActions {
     action?: EditableState["editableAction"],
     type?: EditableState["editableNodeType"],
   ) => void;
+  resetEditableState: () => void;
 }
 
 const mock: FolderTree = {
@@ -29,22 +30,24 @@ const mock: FolderTree = {
   data: "folder",
 };
 
+const defaultEditableState: EditableState = {
+  editableNodeKey: "",
+  editableAction: "",
+  editableNodeType: "",
+};
+
 export const useFolderTreeStore = create<FolderTreeState & FolderTreeActions>(
   (set) => ({
     tree: [mock],
-    editableState: {
-      editableNodeKey: "",
-      editableAction: null,
-      editableNodeType: null,
-    },
+    editableState: defaultEditableState,
     changeTree: (newTree) =>
       set(() => ({
         tree: [...newTree],
       })),
     setEditableState: (
       key: EditableState["editableNodeKey"],
-      action: EditableState["editableAction"] = null,
-      type: EditableState["editableNodeType"] = null,
+      action: EditableState["editableAction"] = "",
+      type: EditableState["editableNodeType"] = "",
     ) =>
       set(() => ({
         editableState: {
@@ -52,6 +55,10 @@ export const useFolderTreeStore = create<FolderTreeState & FolderTreeActions>(
           editableAction: action,
           editableNodeType: type,
         },
+      })),
+    resetEditableState: () =>
+      set(() => ({
+        editableState: defaultEditableState,
       })),
   }),
 );

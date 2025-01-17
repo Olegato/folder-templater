@@ -1,35 +1,17 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import {
-  useConfirmModalStore,
-  useEditFormStore,
-  useFolderTreeStore,
-} from "../../store";
+import { useConfirmModalStore } from "../../store";
 import { EditForm } from "../edit-form";
-import { useActions } from "../actions-menu/useActions.ts";
-import { DataType } from "../../types/folder-tree.ts";
-import { useValidation } from "../edit-form/useValidation.ts";
+import { useCrudActions } from "../../hooks/useCrudActions.ts";
 
 export const ConfirmModal = () => {
   const { isOpen, handleVisibleModal } = useConfirmModalStore();
-  const { value, setError, resetForm } = useEditFormStore();
-  const { editableState } = useFolderTreeStore();
-  const { addChileNode } = useActions();
-  const { validate } = useValidation();
 
-  const onConfirm = () => {
-    const error = validate(value, editableState.editableNodeType as DataType);
-    if (error) {
-      setError(error);
-    } else {
-      addChileNode(value);
-      onClose();
-    }
-  };
+  const { onResetEdit, onCreateNode } = useCrudActions();
 
-  const onClose = () => {
-    resetForm();
+  const onCancel = () => {
     handleVisibleModal();
+    onResetEdit();
   };
 
   const footerContent = (
@@ -37,22 +19,22 @@ export const ConfirmModal = () => {
       <Button
         label="No"
         icon="pi pi-times"
-        onClick={() => onClose()}
+        onClick={() => onCancel()}
         className="p-button-text"
       />
-      <Button label="Yes" icon="pi pi-check" onClick={() => onConfirm()} />
+      <Button label="Yes" icon="pi pi-check" onClick={() => onCreateNode()} />
     </div>
   );
 
   return (
     <div className="card flex justify-content-center">
       <Dialog
-        header="Header"
+        // header="Header"
         visible={isOpen}
         style={{ width: "50vw" }}
         onHide={() => {
           if (!isOpen) return;
-          onClose();
+          onCancel();
         }}
         footer={footerContent}
       >

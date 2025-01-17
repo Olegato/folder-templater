@@ -1,21 +1,20 @@
 import { Tree } from "primereact/tree";
 import { Button } from "primereact/button";
-import { useActions } from "../actions-menu/useActions.ts";
-import { useEditFormStore, useFolderTreeStore } from "../../store";
+import { useFolderTreeStore } from "../../store";
 import { TreeNode } from "primereact/treenode";
 import { EditForm } from "../edit-form";
 import cn from "classnames";
+import { useCrudActions } from "../../hooks/useCrudActions.ts";
 
 export const FolderTree = () => {
-  const { initCreateNode, initChangeName, onChangeName } = useActions();
   const { tree, editableState } = useFolderTreeStore();
+  const { onChangeNodeLabel, initCreate, initChangeName } = useCrudActions();
   const { editableNodeKey, editableAction } = editableState;
-  const { value } = useEditFormStore();
 
   const renderNodeTemplate = (node: TreeNode) => {
     return (
       //todo нормально стилизовать
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div className={"flex align-items-center gap-2"}>
         <i
           className={cn("pi", {
             "pi-folder": node.data === "folder",
@@ -35,7 +34,7 @@ export const FolderTree = () => {
             <Button
               icon="pi pi-check"
               className="p-button-success"
-              onClick={() => onChangeName(value, node.data)}
+              onClick={() => onChangeNodeLabel()}
             />
           </div>
         )}
@@ -45,13 +44,13 @@ export const FolderTree = () => {
               label="Add folder"
               icon="pi pi-plus"
               className="p-button-text p-button-sm"
-              onClick={() => initCreateNode(node.key, "folder")}
+              onClick={() => initCreate(node.key, "folder")}
             />
             <Button
               label="Add file"
               icon="pi pi-plus"
               className="p-button-text p-button-sm"
-              onClick={() => initCreateNode(node.key, "file")}
+              onClick={() => initCreate(node.key, "file")}
             />
           </>
         )}
@@ -59,7 +58,7 @@ export const FolderTree = () => {
           label="Rename"
           icon="pi pi-plus"
           className="p-button-text p-button-sm"
-          onClick={() => initChangeName(node.key, node.label)}
+          onClick={() => initChangeName(node.key, node.label, node.data)}
         />
       </div>
     );
