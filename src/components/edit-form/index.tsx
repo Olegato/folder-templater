@@ -6,7 +6,6 @@ export const EditForm = ({ ...props }) => {
 
   return (
     <div className="flex flex-column gap-2">
-      {/*<label htmlFor="username">Введите название папки</label>*/}
       <InputText
         id="name"
         autoFocus

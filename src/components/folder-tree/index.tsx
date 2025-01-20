@@ -5,15 +5,22 @@ import { TreeNode } from "primereact/treenode";
 import { EditForm } from "../edit-form";
 import cn from "classnames";
 import { useCrudActions } from "../../hooks/useCrudActions.ts";
+import { useEffect } from "react";
+import { useGenerateOutputScript } from "../../hooks/useGenerateOutputScript.ts";
 
 export const FolderTree = () => {
   const { tree, editableState } = useFolderTreeStore();
   const { onChangeNodeLabel, initCreate, initChangeName } = useCrudActions();
   const { editableNodeKey, editableAction } = editableState;
 
+  const { generateScript } = useGenerateOutputScript();
+
+  useEffect(() => {
+    console.log(generateScript(tree));
+  }, [tree]);
+
   const renderNodeTemplate = (node: TreeNode) => {
     return (
-      //todo нормально стилизовать
       <div className={"flex align-items-center gap-2"}>
         <i
           className={cn("pi", {
@@ -25,12 +32,8 @@ export const FolderTree = () => {
           <span>{node.label}</span>
         )}
         {editableNodeKey === node.key && editableAction === "edit" && (
-          <div
-            className="p-inputgroup flex-1"
-            // onBlur={onCancelChangeName}
-          >
+          <div className="p-inputgroup flex-1">
             <EditForm />
-            {/*заменить бюаттон на див*/}
             <Button
               icon="pi pi-check"
               className="p-button-success"
@@ -71,7 +74,7 @@ export const FolderTree = () => {
         value={tree}
         nodeTemplate={renderNodeTemplate}
         selectionMode="single"
-        // className="p-tree-container"
+        className="p-tree-container"
       />
     </div>
   );

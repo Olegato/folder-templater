@@ -29,7 +29,6 @@ export const ConfirmModal = () => {
   return (
     <div className="card flex justify-content-center">
       <Dialog
-        // header="Header"
         visible={isOpen}
         style={{ width: "50vw" }}
         onHide={() => {
